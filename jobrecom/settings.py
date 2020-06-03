@@ -76,8 +76,12 @@ WSGI_APPLICATION = 'jobrecom.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'JobRecommendSystem',
+        'USER': 'admin',
+        'PASSWORD': 'tkdghkd1!',
+        'HOST': 'project.catth3zniejo.ap-northeast-2.rds.amazonaws.com',
+        'PORT': '3306',
     }
 }
 
