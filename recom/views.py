@@ -2,11 +2,19 @@ from django.shortcuts import render
 
 def index(request):
     """index page"""
-
     ctx = {
     }
 
-    return render(request, 'index.html', ctx)
+    if request.user.is_authenticated:
+        username = request.user.username
+        user = request.user
+        ctx['userobj'] = user
+
+        return render(request, 'index.html', ctx)
+    else:
+        return redirect('login')
+
+
 
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
