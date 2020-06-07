@@ -23,9 +23,6 @@ def job_list(request):
     ctx={}
 
     list = recom_models.Notice.objects.raw('SELECT * FROM notice')
-
-    # ShipmentPPTLMapping.objects.filter(shipment_id__scans__barcode="xyzabc")
-
     ctx['list'] = list
 
     return render(request, 'job_list.html', ctx)
