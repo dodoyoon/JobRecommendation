@@ -47,3 +47,9 @@ def interest(request):
     }
 
     return render(request, 'interest.html', ctx)
+
+def personal(request):
+    ctx = {
+    }
+
+    return render(request, 'personalized.html', ctx)
