@@ -1,6 +1,59 @@
 {% extends "base_generic.html" %}
 
+{% block style %}
+{% load static %}
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<!--Custom styles-->
+<link href="{% static 'recom/job_list.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 <h1>Personalized Page</h1>
+
+<div class="container">
+	<div class="row">
+        {% for job in list %}
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+        {% if job.min_edubg == "학력무관" %}
+			<div class="offer offer-radius offer-success">
+        {% elif job.min_edubg == "초졸이하" or job.min_edubg == "중졸" or job.min_edubg == "고졸" %}
+            <div class="offer offer-default">
+        {% elif job.min_edubg == "대졸(2~3년)" %}
+            <div class="offer offer-radius offer-primary">
+        {% elif job.min_edubg == "대졸(4년)" %}
+            <div class="offer offer-info">
+        {% elif job.min_edubg == "석사" %}
+            <div class="offer offer-warning">
+        {% else %}
+            <div class="offer offer-radius offer-danger">
+        {% endif %}
+				<div class="shape">
+					<div class="shape-text">
+						{{ job.min_edubg }}
+					</div>
+				</div>
+				<div class="offer-content">
+					<h3 class="lead">
+                        {{ job.title }}
+					</h3>
+					<p>
+						{{ job.company.company }}
+					</p>
+				</div>
+			</div>
+		</div>
+        {% endfor %}
+	</div>
+</div>
 
 {% endblock %}
