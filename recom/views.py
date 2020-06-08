@@ -55,6 +55,20 @@ def job_list(request):
 
     return render(request, 'job_list.html', ctx)
 
+def job_detail(request):
+    ctx={}
+
+    if request.user.is_authenticated:
+        username = request.user.username
+        user = request.user
+        ctx['userobj'] = user
+    else:
+        return redirect('login')
+
+
+
+    return render(request, 'job_detail.html', ctx)
+
 
 def signup(request):
     if request.method == 'POST':
