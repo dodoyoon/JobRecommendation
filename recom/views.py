@@ -3,11 +3,8 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-<<<<<<< Updated upstream
 from django.contrib.auth.models import User
-=======
 from django.http import HttpResponse
->>>>>>> Stashed changes
 
 from recom import models as recom_models
 
@@ -111,7 +108,7 @@ def job_detail(request, pk):
 
     ctx['salary_str'] = salary_str
 
-    print(salary_str)
+    # print(salary_str)
 
     return render(request, 'job_detail.html', ctx)
 
@@ -191,7 +188,7 @@ def interest(request):
     else:
         ctx['debug'] = 'Does not exist'
         recom_models.User.objects.create(user_id=User.objects.get(username=username).id)
-    
+
     ctx['basic'] = recom_models.User.objects.get(user_id=userid)
     ctx['edu'] = edu_level
     ctx['career'] = career
