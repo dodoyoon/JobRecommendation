@@ -4,7 +4,7 @@
     {% load static %}
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	<title>Material Bootstrap Wizard by Creative Tim</title>
+	<title>회사정보</title>
 
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
@@ -27,13 +27,13 @@
 <body>
 	<div class="image-container set-full-height" style="background-image: url({% static 'recom/assets/img/wizard-book.jpg'%})">
 	    <!--   Creative Tim Branding   -->
-	    <a href="http://creative-tim.com">
+	    <a href="{% url 'job_list' %}">
 	         <div class="logo-container">
 	            <div class="logo">
 	                <img src="{% static 'recom/assets/img/new_logo.png'%}">
 	            </div>
 	            <div class="brand">
-	                Creative Tim
+	                뒤로가기
 	            </div>
 	        </div>
 	    </a>
@@ -56,104 +56,86 @@
 
 		                    	<div class="wizard-header">
 		                        	<h3 class="wizard-title">
-		                        		Book a Room
+		                        		{{ notice.title }}
 		                        	</h3>
-									<h5>This information will let us know more about you.</h5>
+									<h5>{{ notice.company.company }}</h5>
 		                    	</div>
 								<div class="wizard-navigation">
 									<ul>
-			                            <li><a href="#details" data-toggle="tab">Account</a></li>
-			                            <li><a href="#captain" data-toggle="tab">Room Type</a></li>
-			                            <li><a href="#description" data-toggle="tab">Extra Details</a></li>
+			                            <li><a href="#details" data-toggle="tab">직업정보</a></li>
+			                            <li><a href="#captain" data-toggle="tab">조건</a></li>
+			                            <li><a href="#description" data-toggle="tab">회사정보</a></li>
 			                        </ul>
 								</div>
 
 		                        <div class="tab-content">
 		                            <div class="tab-pane" id="details">
-		                            	<div class="row">
-			                            	<div class="col-sm-12">
-			                                	<h4 class="info-text"> Let's start with the basic details.</h4>
-			                            	</div>
-		                                	<div class="col-sm-6">
-												<div class="input-group">
-													<span class="input-group-addon">
-														<i class="material-icons">email</i>
-													</span>
-													<div class="form-group label-floating">
-			                                          	<label class="control-label">Your Email</label>
-			                                          	<input name="name" type="text" class="form-control">
-			                                        </div>
-												</div>
-
-												<div class="input-group">
-													<span class="input-group-addon">
-														<i class="material-icons">lock_outline</i>
-													</span>
-													<div class="form-group label-floating">
-			                                          	<label class="control-label">Your Password</label>
-			                                          	<input name="name2" type="password" class="form-control">
-			                                        </div>
-												</div>
-
-		                                	</div>
-		                                	<div class="col-sm-6">
-		                                    	<div class="form-group label-floating">
-		                                        	<label class="control-label">Country</label>
-	                                        		<select class="form-control">
-														<option disabled="" selected=""></option>
-	                                                	<option value="Afghanistan"> Afghanistan </option>
-	                                                	<option value="Albania"> Albania </option>
-	                                                	<option value="Algeria"> Algeria </option>
-	                                                	<option value="American Samoa"> American Samoa </option>
-	                                                	<option value="Andorra"> Andorra </option>
-	                                                	<option value="Angola"> Angola </option>
-	                                                	<option value="Anguilla"> Anguilla </option>
-	                                                	<option value="Antarctica"> Antarctica </option>
-	                                                	<option value="...">...</option>
-		                                        	</select>
-		                                    	</div>
-												<div class="form-group label-floating">
-		                                        	<label class="control-label">Daily Budget</label>
-	                                        		<select class="form-control">
-														<option disabled="" selected=""></option>
-	                                                	<option value="Afghanistan"> < $100 </option>
-	                                                	<option value="Albania"> $100 - $499 </option>
-	                                                	<option value="Algeria"> $499 - $999 </option>
-	                                                	<option value="American Samoa"> $999+ </option>
-		                                        	</select>
-		                                    	</div>
-		                                	</div>
-		                            	</div>
-		                            </div>
-		                            <div class="tab-pane" id="captain">
-		                                <h4 class="info-text">What type of room would you want? </h4>
+                                        <h4 class="info-text">직업에 관한 모든것! </h4>
 		                                <div class="row">
 		                                    <div class="col-sm-10 col-sm-offset-1">
 		                                        <div class="col-sm-4">
-		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="This is good if you travel alone.">
+		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="{{ notice.jobs_cd.job_name }}">
 		                                                <input type="radio" name="job" value="Design">
 		                                                <div class="icon">
 		                                                    <i class="material-icons">weekend</i>
 		                                                </div>
-		                                                <h6>Single</h6>
+		                                                <h4>카테고리</h4>
 		                                            </div>
 		                                        </div>
 		                                        <div class="col-sm-4">
-		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Select this room if you're traveling with your family.">
+		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="{{ salary_str }}">
 		                                                <input type="radio" name="job" value="Code">
 		                                                <div class="icon">
 		                                                    <i class="material-icons">home</i>
 		                                                </div>
-		                                                <h6>Family</h6>
+		                                                <h4>연봉</h4>
 		                                            </div>
 		                                        </div>
 												<div class="col-sm-4">
-		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Select this option if you are coming with your team.">
+		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="{{ notice.holiday_tp_nm }}">
 		                                                <input type="radio" name="job" value="Code">
 		                                                <div class="icon">
 		                                                    <i class="material-icons">business</i>
 		                                                </div>
-		                                                <h6>Business</h6>
+		                                                <h4>근무형태</h4>
+		                                            </div>
+		                                        </div>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                            <div class="tab-pane" id="captain">
+		                                <h4 class="info-text">어떤 스펙이 필요할까요? </h4>
+		                                <div class="row">
+		                                    <div class="col-sm-10 col-sm-offset-1">
+		                                        <div class="col-sm-4">
+                                                    {% if notice.max_edubg is not None %}
+		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="{{ notice.max_edubg }}">
+                                                    {% else %}
+                                                    <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="정보없음">
+                                                    {% endif %}
+		                                                <input type="radio" name="job" value="Design">
+		                                                <div class="icon">
+		                                                    <i class="material-icons">weekend</i>
+		                                                </div>
+		                                                <h4>최대학력</h4>
+		                                            </div>
+		                                        </div>
+		                                        <div class="col-sm-4">
+		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="{{notice.min_edubg}}">
+		                                                <input type="radio" name="job" value="Code">
+		                                                <div class="icon">
+		                                                    <i class="material-icons">home</i>
+		                                                </div>
+		                                                <h4>최소학력</h4>
+		                                            </div>
+		                                        </div>
+												<div class="col-sm-4">
+		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="{{notice.career}}">
+		                                                <input type="radio" name="job" value="Code">
+		                                                <div class="icon">
+		                                                    <i class="material-icons">business</i>
+		                                                </div>
+		                                                <h4>경력</h4>
 		                                            </div>
 		                                        </div>
 		                                    </div>
@@ -161,7 +143,7 @@
 		                            </div>
 		                            <div class="tab-pane" id="description">
 		                                <div class="row">
-		                                    <h4 class="info-text"> Drop us a small description.</h4>
+		                                    <h4 class="info-text">회사에 대한 정보 </h4>
 		                                    <div class="col-sm-6 col-sm-offset-1">
 	                                    		<div class="form-group">
 		                                            <label>Room description</label>
@@ -176,40 +158,33 @@
 		                                    </div>
 		                                </div>
 		                            </div>
-		                        </div>
-	                        	<div class="wizard-footer">
-	                            	<div class="pull-right">
-	                                    <input type='button' class='btn btn-next btn-fill btn-danger btn-wd' name='next' value='Next' />
-	                                    <input type='button' class='btn btn-finish btn-fill btn-danger btn-wd' name='finish' value='Finish' />
-	                                </div>
-	                                <div class="pull-left">
-	                                    <input type='button' class='btn btn-previous btn-fill btn-default btn-wd' name='previous' value='Previous' />
 
-										<div class="footer-checkbox">
-											<div class="col-sm-12">
-											  <div class="checkbox">
-												  <label>
-													  <input type="checkbox" name="optionsCheckboxes">
-												  </label>
-												  Subscribe to our newsletter
-											  </div>
-										  </div>
-										</div>
-	                                </div>
-	                                <div class="clearfix"></div>
-	                        	</div>
+                                    <div class="wizard-footer">
+    	                            	<div class="pull-right">
+    	                                    <input type='button' class='btn btn-next btn-fill btn-danger btn-wd' name='next' value='Next' />
+    	                                    <input type='button' class='btn btn-finish btn-fill btn-danger btn-wd' name='finish' value='Finish' />
+    	                                </div>
+    	                                <div class="pull-left">
+    	                                    <input type='button' class='btn btn-previous btn-fill btn-default btn-wd' name='previous' value='Previous' />
+
+    										<div class="footer-checkbox">
+    											<div class="col-sm-12">
+    											  <div class="checkbox">
+    												  <label>
+    													  <input type="checkbox" name="optionsCheckboxes">
+    												  </label>
+    												  Subscribe to our newsletter
+    											  </div>
+    										  </div>
+    										</div>
+    	                                </div>
+		                        </div>
 		                    </form>
 		                </div>
 		            </div> <!-- wizard container -->
 		        </div>
 	    	</div> <!-- row -->
 		</div> <!--  big container -->
-
-	    <div class="footer">
-	        <div class="container text-center">
-	             Made with <i class="fa fa-heart heart"></i> by <a href="http://www.creative-tim.com">Creative Tim</a>. Free download <a href="http://www.creative-tim.com/product/material-bootstrap-wizard">here.</a>
-	        </div>
-	    </div>
 	</div>
 
 </body>

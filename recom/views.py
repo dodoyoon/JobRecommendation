@@ -1,9 +1,13 @@
 from django.shortcuts import render
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+<<<<<<< Updated upstream
 from django.contrib.auth.models import User
+=======
+from django.http import HttpResponse
+>>>>>>> Stashed changes
 
 from recom import models as recom_models
 
@@ -56,7 +60,21 @@ def job_list(request):
 
     return render(request, 'job_list.html', ctx)
 
-def job_detail(request):
+def calc_salary(sal):
+    sal_str = ""
+
+    ten_thousand = sal / 10000
+    if ten_thousand / 10000 > 1:
+        hund_million = ten_thousand / 10000
+        sal_str = str(hund_million)
+        sal_str += " 억"
+
+    sal_str += str(round(ten_thousand))
+    sal_str += " 만원"
+
+    return sal_str
+
+def job_detail(request, pk):
     ctx={}
 
     if request.user.is_authenticated:
@@ -66,7 +84,34 @@ def job_detail(request):
     else:
         return redirect('login')
 
+    try:
+        notice = get_object_or_404(recom_models.Notice, pk=pk)
+    except Notice.DoesNotExist:
+        return HttpResponse("채용공고가 없습니다.")
 
+
+    min_sal = int(notice.min_sal)
+    max_sal = int(notice.max_sal)
+
+    if max_sal is not None:
+        max_sal_str = calc_salary(max_sal)
+    else:
+        max_sal_str = "정보없음"
+
+    min_sal_str = calc_salary(min_sal)
+
+
+    ctx['notice'] = notice
+    salary_str = "연봉타입 : "
+    salary_str += str(notice.sal_tp_nm)
+    salary_str += '\n'
+    salary_str += "최대연봉 : " + max_sal_str
+    salary_str += '\n'
+    salary_str += "최소연봉 : " + min_sal_str
+
+    ctx['salary_str'] = salary_str
+
+    print(salary_str)
 
     return render(request, 'job_detail.html', ctx)
 

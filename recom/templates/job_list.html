@@ -45,7 +45,7 @@
 				</div>
 				<div class="offer-content">
                     <h3 class="lead">
-                        <a href="{% url 'job_detail' %}">{{ job.title }}</a>
+                        <a href="{% url 'job_detail' job.pk %}">{{ job.title }}</a>
 				    </h3>
 					<p>
 						{{ job.company.company }}
