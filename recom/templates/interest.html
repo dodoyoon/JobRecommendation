@@ -3,4 +3,35 @@
 {% block content %}
 <h1>Interest Page</h1>
 
+<div class="jumbotron">
+    <button type="button">Edit</button>
+    <p>username : {{ userobj.username }}</p>
+    <p>name : {{ basic.name }}</p>
+    <p>age : {{ basic.age }}</p>
+    <p>region id : {{ basic.region_id }}</p>
+    <p>location : {{ basic.location }}</p>
+    <p>holiday_tp_nm : {{ basic.holiday_tp_nm }}</p>
+    <p>min_sal : {{ basic.min_sal }}</p>
+</div>
+
+<div class="jumbotron">
+    <button type="button">Edit</button>
+    <p><u>edu level</u></p> 
+    {{ edu }}
+</div>
+
+<div class="jumbotron">
+    <button type="button">Edit</button>
+    <p><u>career</u></p>
+    {{ career }}
+</div>
+
+<div class="jumbotron">
+    <button type="button">Edit</button>
+    <p><u>License</u></p> 
+    {% for ex in license %}
+        <p>{{ ex }}</p>
+    {% endfor %}
+</div>
+
 {% endblock %}

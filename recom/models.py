@@ -220,7 +220,7 @@ class Region(models.Model):
 
 
 class User(models.Model):
-    user_id = models.IntegerField(primary_key=True)
+    user = models.OneToOneField(AuthUser, models.DO_NOTHING, primary_key=True)
     name = models.CharField(max_length=40, blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
     region = models.ForeignKey(Region, models.DO_NOTHING, blank=True, null=True)

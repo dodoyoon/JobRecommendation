@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.models import User
 
 from recom import models as recom_models
 
@@ -84,8 +85,52 @@ def signup(request):
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
 
+import sys
+import requests
+import base64
+import json
+import logging
+import pymysql
 def interest(request):
     ctx = {}
+
+    host = "project.catth3zniejo.ap-northeast-2.rds.amazonaws.com"
+    port = 3306
+    username = "admin"
+    password = "tkdghkd1!"
+    database = "JobRecommendSystem"
+
+    conn = pymysql.connect(host, user=username, passwd=password, db=database, \
+    port=port, use_unicode=True, charset='utf8')
+    cursor = conn.cursor()
+    user_id = 1
+
+    user_info = {}
+    user_info.update(user_id = user_id)
+
+    query = "SET @spec_id = (SELECT user_spec_id FROM user AS u JOIN user_spec AS s ON u.user_id = s.user_id WHERE user_spec_id = {});".format(user_id)
+    cursor.execute(query)
+    query = "SELECT edu_level FROM user_spec WHERE user_spec_id = @spec_id;"
+    cursor.execute(query)
+    edu_level = cursor.fetchall()[0][0]
+
+    query1 = "SET @c_id = (SELECT career_id FROM user_career WHERE user_spec_id = @spec_id); "
+    query2 = "SELECT career FROM career WHERE career_id = @c_id;"
+    cursor.execute(query1)
+    cursor.execute(query2)
+    career = cursor.fetchall()[0][0]
+
+    query1 = "SELECT COUNT(*) FROM user_license WHERE user_spec_id = @spec_id;"
+    cursor.execute(query1)
+    num_license = cursor.fetchall()[0][0]
+    query2 = "SELECT license_id FROM user_license WHERE user_spec_id = @spec_id;"
+    cursor.execute(query2)
+    license = list(cursor.fetchall())
+    license_lst = []
+    for i in range(num_license):
+        query = "SELECT license FROM license WHERE license_id = {};".format(license[i][0])
+        cursor.execute(query)
+        license_lst.append(cursor.fetchall()[0][0])
 
     if request.user.is_authenticated:
         username = request.user.username
@@ -94,7 +139,18 @@ def interest(request):
     else:
         return redirect('login')
 
+    userid = User.objects.get(username=username).id
 
+    if recom_models.User.objects.filter(user_id=userid).exists():
+        ctx['debug'] = 'Exists'
+    else:
+        ctx['debug'] = 'Does not exist'
+        recom_models.User.objects.create(user_id=User.objects.get(username=username).id)
+    
+    ctx['basic'] = recom_models.User.objects.get(user_id=userid)
+    ctx['edu'] = edu_level
+    ctx['career'] = career
+    ctx['license'] = license_lst
     return render(request, 'interest.html', ctx)
 
 def personal(request):
