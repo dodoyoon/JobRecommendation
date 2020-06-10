@@ -216,33 +216,20 @@ def interest(request):
                 idx_lst.append(temp_lst[i][0])
             license_lst = list(zip(idx_lst, license_lst))
 
-            if recom_models.UserLicense.objects.filter(user_spec_id=userid).exists():
-                licenseid = (recom_models.UserLicense.objects.filter(user_spec_id=userid).latest('user_license_id').user_license_id) + 1
-            else:
-                licenseid = 1
-            
-            ctx['licenseid'] = licenseid
-
             ctx['career'] = career
             ctx['license'] = license_lst
             ctx['usercarexists'] = True
         
         else:
             ctx['usercarexists'] = False
-            if recom_models.UserLicense.objects.filter(user_spec_id=userid).exists():
-                licenseid = (recom_models.UserLicense.objects.filter(user_spec_id=userid).latest('user_license_id').user_license_id) + 1
-            else:
-                licenseid = 1
-            
-            ctx['licenseid'] = licenseid
+
     else:
         ctx['userspecexists'] = False
-        if recom_models.UserLicense.objects.filter(user_spec_id=userid).exists():
-            licenseid = (recom_models.UserLicense.objects.filter(user_spec_id=userid).latest('user_license_id').user_license_id) + 1
-        else:
-            licenseid = 1    
-        ctx['licenseid'] = licenseid
     
+    if recom_models.UserLicense.objects.all():     
+        ctx['licenseid'] = (recom_models.UserLicense.objects.all().latest('user_license_id').user_license_id) + 1
+    else:
+        ctx['licenseid'] = 1
     ctx['basic'] = recom_models.User.objects.get(user_id=userid)
 
     return render(request, 'interest.html', ctx)
