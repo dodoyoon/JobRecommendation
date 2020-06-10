@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>Edit Career Page</h1>
+
+<div class="container-fluid mb-4" id="form_container" style="border-style:solid; border-color: #ebe6e3; border-width: 1px;">
+    <br>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" />
+      </form>
+</div>
+
+{% endblock %}

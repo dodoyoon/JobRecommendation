@@ -14,24 +14,36 @@
     <p>min_sal : {{ basic.min_sal }}</p>
 </div>
 
+
 <div class="jumbotron">
-    <button type="button">Edit</button>
+    {% if userspecexists %}
+    <a style="float:right;" href="{% url 'edit_edu' user.pk %}" class="btn btn-outline-primary">Edit</a>
+    {% else %}
+    <a style="float:right;" href="{% url 'add_edu' user.pk %}" class="btn btn-outline-primary">Add</a>
+    {% endif %}
     <p><u>edu level</u></p> 
     {{ edu }}
 </div>
 
+{% if userspecexists %}
 <div class="jumbotron">
-    <button type="button">Edit</button>
+    {% if usercarexists %}
+    <a style="float:right;" href="{% url 'edit_career' user.pk %}" class="btn btn-outline-primary">Edit</a>
+    {% else %}
+    <a style="float:right;" href="{% url 'add_career' user.pk %}" class="btn btn-outline-primary">Add</a>
+    {% endif %}
     <p><u>career</u></p>
     {{ career }}
 </div>
 
 <div class="jumbotron">
-    <button type="button">Edit</button>
+    <a style="float:right;" href="#" class="btn btn-outline-primary">Edit</a>
     <p><u>License</u></p> 
     {% for ex in license %}
         <p>{{ ex }}</p>
     {% endfor %}
 </div>
+{% endif %}
+
 
 {% endblock %}

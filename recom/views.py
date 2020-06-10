@@ -6,6 +6,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
+from django.views.generic.edit import CreateView
+
 from recom import models as recom_models
 
 
@@ -144,6 +146,8 @@ def interest(request):
         return redirect('login')
 
     userid = User.objects.get(username=username).id
+    dbuser = recom_models.User.objects.get(user_id=userid)
+    dbuserspec = recom_models.UserSpec.objects.get(user=dbuser)
     ctx['user'] = User.objects.get(username=username)
 
     if recom_models.User.objects.filter(user_id=userid).exists():
@@ -161,45 +165,63 @@ def interest(request):
     conn = pymysql.connect(host, user=username, passwd=password, db=database, \
     port=port, use_unicode=True, charset='utf8')
     cursor = conn.cursor()
-    user_id = 1
+    user_id = userid
 
     user_info = {}
     user_info.update(user_id = user_id)
 
-    query = "SET @spec_id = (SELECT user_spec_id FROM user AS u JOIN user_spec AS s ON u.user_id = s.user_id WHERE user_spec_id = {});".format(user_id)
-    cursor.execute(query)
-    query = "SELECT edu_level FROM user_spec WHERE user_spec_id = @spec_id;"
-    cursor.execute(query)
-    edu_level = cursor.fetchall()[0][0]
-
-    query1 = "SET @c_id = (SELECT career_id FROM user_career WHERE user_spec_id = @spec_id); "
-    query2 = "SELECT career FROM career WHERE career_id = @c_id;"
-    cursor.execute(query1)
-    cursor.execute(query2)
-    career = cursor.fetchall()[0][0]
-
-    query1 = "SELECT COUNT(*) FROM user_license WHERE user_spec_id = @spec_id;"
-    cursor.execute(query1)
-    num_license = cursor.fetchall()[0][0]
-    query2 = "SELECT license_id FROM user_license WHERE user_spec_id = @spec_id;"
-    cursor.execute(query2)
-    license = list(cursor.fetchall())
-    license_lst = []
-    for i in range(num_license):
-        query = "SELECT license FROM license WHERE license_id = {};".format(license[i][0])
+    '''edu level'''
+    if recom_models.UserSpec.objects.filter(user=dbuser).exists():
+        query = "SET @spec_id = (SELECT user_spec_id FROM user AS u JOIN user_spec AS s ON u.user_id = s.user_id WHERE user_spec_id = {});".format(user_id)
         cursor.execute(query)
-        license_lst.append(cursor.fetchall()[0][0])
+        query = "SELECT edu_level FROM user_spec WHERE user_spec_id = @spec_id;"
+        cursor.execute(query)
+        edu_level = cursor.fetchall()[0][0]
+        ctx['edu'] = edu_level
+        ctx['userspecexists'] = True
+
+        if recom_models.UserCareer.objects.filter(user_spec=dbuserspec):
+
+            '''career'''
+            query1 = "SET @c_id = (SELECT career_id FROM user_career WHERE user_spec_id = @spec_id); "
+            query2 = "SELECT career FROM career WHERE career_id = @c_id;"
+            cursor.execute(query1)
+            cursor.execute(query2)
+            career = cursor.fetchall()[0][0]
+
+            '''license'''
+            query1 = "SELECT COUNT(*) FROM user_license WHERE user_spec_id = @spec_id;"
+            cursor.execute(query1)
+            num_license = cursor.fetchall()[0][0]
+            query2 = "SELECT license_id FROM user_license WHERE user_spec_id = @spec_id;"
+            cursor.execute(query2)
+            license = list(cursor.fetchall())
+            license_lst = []
+            for i in range(num_license):
+                query = "SELECT license FROM license WHERE license_id = {};".format(license[i][0])
+                cursor.execute(query)
+                license_lst.append(cursor.fetchall()[0][0])
+
+            ctx['career'] = career
+            ctx['license'] = license_lst
+            ctx['usercarexists'] = True
+        
+        else:
+            ctx['usercarexists'] = False
+    else:
+        ctx['userspecexists'] = False
 
     ctx['basic'] = recom_models.User.objects.get(user_id=userid)
-    ctx['edu'] = edu_level
-    ctx['career'] = career
-    ctx['license'] = license_lst
+    
+    
     return render(request, 'interest.html', ctx)
 
-'''
-from .forms import UserForm
+
+
+
+from .forms import UserCareerForm
 from django.contrib import messages
-def edit_basic(request, pk):
+def CareerUpdate(request, pk):
     ctx={}
 
     if request.user.is_authenticated:
@@ -208,38 +230,31 @@ def edit_basic(request, pk):
     else:
         return redirect('loginpage')
 
-    post = User.objects.get(id=pk)
+    post = recom_models.UserCareer.objects.get(user_spec_id=pk)
 
     if request.method == "GET":
-        form = UserForm(instance=post)
+        form = UserCareerForm(instance=post)
     elif request.method == "POST":
-        form = UserForm(request.POST, instance=post)
+        form = UserCareerForm(request.POST, instance=post)
         if form.is_valid():
             # print(form.cleaned_data)
-            post.name = form.cleaned_data['name']
-            post.age = form.cleaned_data['age']
-            post.region.set(form.cleaned_data['region'])
-            post.location = form.cleaned_data['location']
-            post.holidy_tp_nm = form.cleaned_data['holiday_tp_nm']
+            post.career = (form.cleaned_data['career'])
 
             post.save()
 
             messages.success(request, '수정 성공.', extra_tags='alert')
-            return redirect('interest', pk)
+            return redirect('interest')
         else:
             messages.warning(request, '모든 내용이 정확하게 입력되었는지 확인해주세요.', extra_tags='alert')
 
     ctx['form'] = form
 
     return render(request, 'edit_basic.html', ctx)
-'''
 
-# import generic UpdateView 
+
 from django.views.generic.edit import UpdateView 
-# Relative import of GeeksModel 
   
 class BasicUpdate(UpdateView): 
-    # specify the model you want to use 
     model = recom_models.User
 
     template_name = 'edit_basic.html'
@@ -254,10 +269,46 @@ class BasicUpdate(UpdateView):
         "min_sal"
     ] 
     
-    # can specify success url 
-    # url to redirect after sucessfully 
-    # updating details 
     success_url ="/"
+
+class EduLevelUpdate(UpdateView):
+    model = recom_models.UserSpec
+
+    template_name = 'edit_edu.html'
+
+    fields = [
+        "edu_level"
+    ]
+
+    success_url = "/"
+
+class EduLevelAdd(CreateView): 
+    model = recom_models.UserSpec 
+  
+    template_name = 'add_edu.html'
+  
+    fields = ['edu_level'] 
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        userid = User.objects.get(username=self.request.user.username).id
+        obj.user_id = userid
+        obj.user_spec_id = userid
+        obj.save()
+
+class CareerAdd(CreateView): 
+    model = recom_models.UserCareer 
+  
+    template_name = 'add_career.html'
+  
+    fields = ['career'] 
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        user = recom_models.User.objects.get(user=self.request.user.id)
+        userspec = recom_models.UserSpec.objects.get(user=user).user_spec_id
+        obj.user_spec_id = userspec
+        obj.save()
 
 def personal(request):
     ctx = {}

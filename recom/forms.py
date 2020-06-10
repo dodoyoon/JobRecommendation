@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from django import forms
-from .models import User, Region
+from .models import User, Region, UserCareer
 
 class UserForm(forms.ModelForm):
 
@@ -12,5 +12,10 @@ class UserForm(forms.ModelForm):
 
         super(UserForm, self).__init__(*args, **kwargs)
         self.fields['region'].queryset = Region.objects.all().values("region")
+
+class UserCareerForm(forms.ModelForm):
+    class Meta:
+        model = UserCareer
+        fields = ('career', )
 
         
