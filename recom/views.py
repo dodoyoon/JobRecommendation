@@ -6,7 +6,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, DeleteView
 
 from recom import models as recom_models
 
@@ -146,15 +146,17 @@ def interest(request):
         return redirect('login')
 
     userid = User.objects.get(username=username).id
-    dbuser = recom_models.User.objects.get(user_id=userid)
-    dbuserspec = recom_models.UserSpec.objects.get(user=dbuser)
+    
     ctx['user'] = User.objects.get(username=username)
 
     if recom_models.User.objects.filter(user_id=userid).exists():
         ctx['debug'] = 'Exists'
     else:
         ctx['debug'] = 'Does not exist'
-        recom_models.User.objects.create(user_id=User.objects.get(username=username).id)
+        recom_models.User.objects.create(user_id=userid)
+
+    dbuser = recom_models.User.objects.get(user_id=userid)
+    
 
     host = "project.catth3zniejo.ap-northeast-2.rds.amazonaws.com"
     port = 3306
@@ -179,6 +181,8 @@ def interest(request):
         edu_level = cursor.fetchall()[0][0]
         ctx['edu'] = edu_level
         ctx['userspecexists'] = True
+
+        dbuserspec = recom_models.UserSpec.objects.get(user=dbuser)
 
         if recom_models.UserCareer.objects.filter(user_spec=dbuserspec):
 
@@ -298,9 +302,7 @@ class EduLevelAdd(CreateView):
 
 class CareerAdd(CreateView): 
     model = recom_models.UserCareer 
-  
     template_name = 'add_career.html'
-  
     fields = ['career'] 
 
     def form_valid(self, form):
@@ -309,6 +311,26 @@ class CareerAdd(CreateView):
         userspec = recom_models.UserSpec.objects.get(user=user).user_spec_id
         obj.user_spec_id = userspec
         obj.save()
+
+class LicenseAdd(CreateView):
+    model = recom_models.UserLicense
+    template_name = 'add_license.html'
+    fields = ['license'] 
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        userid = User.objects.get(username=self.request.user.username).id
+        obj.user_id = userid
+        obj.user_spec_id = userid
+        obj.save()
+
+class LicenseDelete(DeleteView):
+    model = recom_models.UserLicense
+    template_name = 'delete_license.html'
+    
+    success_url = '/'
+
+    
 
 def personal(request):
     ctx = {}
