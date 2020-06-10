@@ -285,7 +285,7 @@ class BasicUpdate(UpdateView):
         "min_sal"
     ] 
     
-    success_url ="/"
+    success_url ="/recom/interest/"
 
 class EduLevelUpdate(UpdateView):
     model = recom_models.UserSpec
@@ -296,7 +296,7 @@ class EduLevelUpdate(UpdateView):
         "edu_level"
     ]
 
-    success_url = "/"
+    success_url = "/recom/interest/"
 
 class EduLevelAdd(CreateView): 
     model = recom_models.UserSpec 
@@ -305,6 +305,8 @@ class EduLevelAdd(CreateView):
   
     fields = ['edu_level'] 
 
+    success_url = '/recom/interest/'
+
     def form_valid(self, form):
         obj = form.save(commit=False)
         userid = User.objects.get(username=self.request.user.username).id
@@ -312,12 +314,14 @@ class EduLevelAdd(CreateView):
         obj.user_spec_id = userid
         obj.save()
 
+    def post(self, request, pk):
+        super(EduLevelAdd, self).post(request)
+        return redirect('interest')
+
 class CareerAdd(CreateView): 
     model = recom_models.UserCareer 
     template_name = 'add_career.html'
     fields = ['career'] 
-
-    success_url = "/"
 
     def form_valid(self, form):
         obj = form.save(commit=False)
@@ -326,6 +330,10 @@ class CareerAdd(CreateView):
         obj.user_spec_id = userspec
         obj.user_career_id = self.request.user.id
         obj.save()
+
+    def post(self, request, pk):
+        super(CareerAdd, self).post(request)
+        return redirect('interest')
 
 
 class LicenseAdd(CreateView):
@@ -343,12 +351,16 @@ class LicenseAdd(CreateView):
         obj.user_spec_id = userid
         obj.user_license_id = licenseid
         obj.save()
+    
+    def post(self, request, pk):
+        super(LicenseAdd, self).post(request)
+        return redirect('interest')
 
 class LicenseDelete(DeleteView):
     model = recom_models.UserLicense
     template_name = 'delete_license.html'
     
-    success_url = '/'
+    success_url = '/recom/interest/'
 
     
 
