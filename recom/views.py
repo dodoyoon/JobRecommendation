@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django.shortcuts import redirect
 
 from django.views.generic.edit import CreateView, DeleteView
 
@@ -206,21 +207,45 @@ def interest(request):
                 cursor.execute(query)
                 license_lst.append(cursor.fetchall()[0][0])
 
+            query = "SELECT user_license_id FROM user_license WHERE user_spec_id = @spec_id;"
+            cursor.execute(query)
+            temp_lst = list(cursor.fetchall())
+
+            idx_lst = []
+            for i in range(num_license):
+                idx_lst.append(temp_lst[i][0])
+            license_lst = list(zip(idx_lst, license_lst))
+
+            if recom_models.UserLicense.objects.filter(user_spec_id=userid).exists():
+                licenseid = (recom_models.UserLicense.objects.filter(user_spec_id=userid).latest('user_license_id').user_license_id) + 1
+            else:
+                licenseid = 1
+            
+            ctx['licenseid'] = licenseid
+
             ctx['career'] = career
             ctx['license'] = license_lst
             ctx['usercarexists'] = True
         
         else:
             ctx['usercarexists'] = False
+            if recom_models.UserLicense.objects.filter(user_spec_id=userid).exists():
+                licenseid = (recom_models.UserLicense.objects.filter(user_spec_id=userid).latest('user_license_id').user_license_id) + 1
+            else:
+                licenseid = 1
+            
+            ctx['licenseid'] = licenseid
     else:
         ctx['userspecexists'] = False
-
+        if recom_models.UserLicense.objects.filter(user_spec_id=userid).exists():
+            licenseid = (recom_models.UserLicense.objects.filter(user_spec_id=userid).latest('user_license_id').user_license_id) + 1
+        else:
+            licenseid = 1    
+        ctx['licenseid'] = licenseid
+    
     ctx['basic'] = recom_models.User.objects.get(user_id=userid)
-    
-    
+
     return render(request, 'interest.html', ctx)
-
-
 
 
 from .forms import UserCareerForm
@@ -305,12 +330,16 @@ class CareerAdd(CreateView):
     template_name = 'add_career.html'
     fields = ['career'] 
 
+    success_url = "/"
+
     def form_valid(self, form):
         obj = form.save(commit=False)
         user = recom_models.User.objects.get(user=self.request.user.id)
         userspec = recom_models.UserSpec.objects.get(user=user).user_spec_id
         obj.user_spec_id = userspec
+        obj.user_career_id = self.request.user.id
         obj.save()
+
 
 class LicenseAdd(CreateView):
     model = recom_models.UserLicense
@@ -320,8 +349,12 @@ class LicenseAdd(CreateView):
     def form_valid(self, form):
         obj = form.save(commit=False)
         userid = User.objects.get(username=self.request.user.username).id
-        obj.user_id = userid
+        if recom_models.UserLicense.objects.filter(user_spec_id=userid).exists():
+            licenseid = recom_models.UserLicense.objects.filter(user_spec_id=userid).latest('user_license_id').user_license_id + 1
+        else:
+            licenseid = 1
         obj.user_spec_id = userid
+        obj.user_license_id = licenseid
         obj.save()
 
 class LicenseDelete(DeleteView):

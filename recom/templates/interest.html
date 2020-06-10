@@ -37,10 +37,10 @@
 </div>
 
 <div class="jumbotron">
-    <p><u>License</u><a style="float:right;" href="{% url 'add_license' user.pk %}" class="btn btn-outline-primary">Add</a></p> 
+    <p><u>License</u><a style="float:right;" href="{% url 'add_license' licenseid %}" class="btn btn-outline-primary">Add</a></p> 
     
     {% for ex in license %}
-        <p>{{ ex }}    <a style="float:right;" href="{% url 'delete_license' user.pk %}" class="btn btn-outline-primary">Delete</a></p>
+        <p>{{ ex.1 }}    <a style="float:right;" href="{% url 'delete_license' ex.0 %}" class="btn btn-outline-primary">Delete</a></p>
     {% endfor %}
 </div>
 {% endif %}

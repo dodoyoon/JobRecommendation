@@ -82,6 +82,9 @@ class Career(models.Model):
         managed = False
         db_table = 'career'
 
+    def __str__(self):
+        return "%s" % (self.career)
+
 
 class Company(models.Model):
     company_id = models.IntegerField(primary_key=True)
@@ -176,6 +179,9 @@ class License(models.Model):
         managed = False
         db_table = 'license'
 
+    def __str__(self):
+        return "%s" % (self.license)
+
 
 class Notice(models.Model):
     notice_id = models.IntegerField(primary_key=True)
@@ -218,6 +224,9 @@ class Region(models.Model):
         managed = False
         db_table = 'region'
 
+    def __str__(self):
+        return "%s" % (self.region)
+
 
 class User(models.Model):
     user = models.OneToOneField(AuthUser, models.DO_NOTHING, primary_key=True)
@@ -234,34 +243,33 @@ class User(models.Model):
 
 
 class UserCareer(models.Model):
-    user_spec = models.OneToOneField('UserSpec', models.DO_NOTHING, primary_key=True)
+    user_spec = models.ForeignKey('UserSpec', models.DO_NOTHING)
     career = models.ForeignKey(Career, models.DO_NOTHING)
+    user_career_id = models.IntegerField(primary_key=True)
 
     class Meta:
         managed = False
         db_table = 'user_career'
-        unique_together = (('user_spec', 'career'),)
 
 
 class UserLicense(models.Model):
-    user_spec = models.OneToOneField('UserSpec', models.DO_NOTHING, primary_key=True)
+    user_spec = models.ForeignKey('UserSpec', models.DO_NOTHING)
     license = models.ForeignKey(License, models.DO_NOTHING)
+    user_license_id = models.IntegerField(primary_key=True)
 
     class Meta:
         managed = False
         db_table = 'user_license'
-        unique_together = (('user_spec', 'license'),)
 
 
 class UserSpec(models.Model):
-    user = models.OneToOneField(User, models.DO_NOTHING, primary_key=True)
-    user_spec_id = models.IntegerField()
+    user = models.ForeignKey(User, models.DO_NOTHING)
+    user_spec_id = models.IntegerField(primary_key=True)
     edu_level = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'user_spec'
-        unique_together = (('user', 'user_spec_id'),)
 
 
 class WantedHolidayTpNm(models.Model):
