@@ -136,6 +136,22 @@ import pymysql
 def interest(request):
     ctx = {}
 
+    if request.user.is_authenticated:
+        username = request.user.username
+        user = request.user
+        ctx['userobj'] = user
+    else:
+        return redirect('login')
+
+    userid = User.objects.get(username=username).id
+    ctx['user'] = User.objects.get(username=username)
+
+    if recom_models.User.objects.filter(user_id=userid).exists():
+        ctx['debug'] = 'Exists'
+    else:
+        ctx['debug'] = 'Does not exist'
+        recom_models.User.objects.create(user_id=User.objects.get(username=username).id)
+
     host = "project.catth3zniejo.ap-northeast-2.rds.amazonaws.com"
     port = 3306
     username = "admin"
@@ -174,26 +190,74 @@ def interest(request):
         cursor.execute(query)
         license_lst.append(cursor.fetchall()[0][0])
 
-    if request.user.is_authenticated:
-        username = request.user.username
-        user = request.user
-        ctx['userobj'] = user
-    else:
-        return redirect('login')
-
-    userid = User.objects.get(username=username).id
-
-    if recom_models.User.objects.filter(user_id=userid).exists():
-        ctx['debug'] = 'Exists'
-    else:
-        ctx['debug'] = 'Does not exist'
-        recom_models.User.objects.create(user_id=User.objects.get(username=username).id)
-
     ctx['basic'] = recom_models.User.objects.get(user_id=userid)
     ctx['edu'] = edu_level
     ctx['career'] = career
     ctx['license'] = license_lst
     return render(request, 'interest.html', ctx)
+
+'''
+from .forms import UserForm
+from django.contrib import messages
+def edit_basic(request, pk):
+    ctx={}
+
+    if request.user.is_authenticated:
+        username = request.user.username
+        ctx['username'] = request.user.username
+    else:
+        return redirect('loginpage')
+
+    post = User.objects.get(id=pk)
+
+    if request.method == "GET":
+        form = UserForm(instance=post)
+    elif request.method == "POST":
+        form = UserForm(request.POST, instance=post)
+        if form.is_valid():
+            # print(form.cleaned_data)
+            post.name = form.cleaned_data['name']
+            post.age = form.cleaned_data['age']
+            post.region.set(form.cleaned_data['region'])
+            post.location = form.cleaned_data['location']
+            post.holidy_tp_nm = form.cleaned_data['holiday_tp_nm']
+
+            post.save()
+
+            messages.success(request, '수정 성공.', extra_tags='alert')
+            return redirect('interest', pk)
+        else:
+            messages.warning(request, '모든 내용이 정확하게 입력되었는지 확인해주세요.', extra_tags='alert')
+
+    ctx['form'] = form
+
+    return render(request, 'edit_basic.html', ctx)
+'''
+
+# import generic UpdateView 
+from django.views.generic.edit import UpdateView 
+# Relative import of GeeksModel 
+  
+class BasicUpdate(UpdateView): 
+    # specify the model you want to use 
+    model = recom_models.User
+
+    template_name = 'edit_basic.html'
+  
+    # specify the fields 
+    
+    fields = [ 
+        "name", 
+        "age",
+        "region",
+        "holiday_tp_nm",
+        "min_sal"
+    ] 
+    
+    # can specify success url 
+    # url to redirect after sucessfully 
+    # updating details 
+    success_url ="/"
 
 def personal(request):
     ctx = {}

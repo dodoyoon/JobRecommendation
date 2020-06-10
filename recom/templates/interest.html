@@ -4,7 +4,7 @@
 <h1>Interest Page</h1>
 
 <div class="jumbotron">
-    <button type="button">Edit</button>
+    <a style="float:right;" href="{% url 'edit_basic' user.pk %}" class="btn btn-outline-primary">Edit</a>
     <p>username : {{ userobj.username }}</p>
     <p>name : {{ basic.name }}</p>
     <p>age : {{ basic.age }}</p>
