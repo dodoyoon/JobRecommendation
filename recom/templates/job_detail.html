@@ -135,7 +135,7 @@
 		                                                <div class="icon">
 		                                                    <i class="material-icons">business</i>
 		                                                </div>
-		                                                <h4>경력</h4>
+		                                                <h4>경력직여부</h4>
 		                                            </div>
 		                                        </div>
 		                                    </div>
@@ -144,16 +144,12 @@
 		                            <div class="tab-pane" id="description">
 		                                <div class="row">
 		                                    <h4 class="info-text">회사에 대한 정보 </h4>
-		                                    <div class="col-sm-6 col-sm-offset-1">
-	                                    		<div class="form-group">
-		                                            <label>Room description</label>
-		                                            <textarea class="form-control" placeholder="" rows="6"></textarea>
-		                                        </div>
-		                                    </div>
+                                            <h5 class="info-text">{{notice.company.basic_addr}}</h5>
+                                            <h5 class="info-text">{{notice.company.detail_addr}}</h5>
 		                                    <div class="col-sm-4">
 		                                    	<div class="form-group">
 		                                            <label class="control-label">Example</label>
-		                                            <p class="description">"The room really nice name is recognized as being a really awesome room. We use it every sunday when we go fishing and we catch a lot. It has some kind of magic shield around it."</p>
+		                                            <a class="description" href="{{notice.wanted_info_url}}">{{notice.wanted_info_url}}</p>
 		                                        </div>
 		                                    </div>
 		                                </div>
@@ -167,16 +163,6 @@
     	                                <div class="pull-left">
     	                                    <input type='button' class='btn btn-previous btn-fill btn-default btn-wd' name='previous' value='Previous' />
 
-    										<div class="footer-checkbox">
-    											<div class="col-sm-12">
-    											  <div class="checkbox">
-    												  <label>
-    													  <input type="checkbox" name="optionsCheckboxes">
-    												  </label>
-    												  Subscribe to our newsletter
-    											  </div>
-    										  </div>
-    										</div>
     	                                </div>
 		                        </div>
 		                    </form>
