@@ -352,9 +352,28 @@ class LicenseAdd(CreateView):
         obj.user_license_id = licenseid
         obj.save()
     
-    def post(self, request, pk):
+    def post(self, request):
         super(LicenseAdd, self).post(request)
         return redirect('interest')
+
+class LicenseTypeAdd(CreateView):
+    model = recom_models.License
+    template_name = 'add_lictype.html'
+    fields = ['license'] 
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        userid = User.objects.get(username=self.request.user.username).id
+        if recom_models.License.objects.all().exists():
+            licenseid = recom_models.License.objects.all().latest('license_id').license_id + 1
+        else:
+            licenseid = 1
+        obj.license_id = licenseid
+        obj.save()
+    
+    def post(self, request):
+        super(LicenseTypeAdd, self).post(request)
+        return redirect('add_license')
 
 class LicenseDelete(DeleteView):
     model = recom_models.UserLicense
