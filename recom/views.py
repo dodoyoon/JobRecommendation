@@ -28,6 +28,54 @@ def index(request):
         return redirect('login')
 
 
+def search(request):
+    ctx = {
+    }
+
+    if request.user.is_authenticated:
+        username = request.user.username
+        user = request.user
+        ctx['userobj'] = user
+    else:
+        return redirect('login')
+
+
+
+    if request.method == 'POST':
+        category = request.POST['category']
+        region = request.POST['region']
+
+        print(category)
+        print(region)
+        print(type(category))
+        print(type(region))
+
+        if category is "":
+            print("YESSSS")
+
+
+        if category is not "" and region is not "":
+            notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category, company__region__region = region)
+
+        elif category is "":
+            notice_list = recom_models.Notice.objects.filter(company__region__region = region)
+
+        else:
+            notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category)
+
+        ctx['notices'] = notice_list
+
+
+        return render(request, 'search.html', ctx)
+    else:
+        return render(request, 'search.html', ctx)
+
+
+
+
+    return render(request, 'search.html', ctx)
+
+
 # 채용정보 보여주기
 def job_list(request):
     ctx={}
@@ -147,7 +195,7 @@ def interest(request):
         return redirect('login')
 
     userid = User.objects.get(username=username).id
-    
+
     ctx['user'] = User.objects.get(username=username)
 
     if recom_models.User.objects.filter(user_id=userid).exists():
@@ -157,7 +205,7 @@ def interest(request):
         recom_models.User.objects.create(user_id=userid)
 
     dbuser = recom_models.User.objects.get(user_id=userid)
-    
+
 
     host = "project.catth3zniejo.ap-northeast-2.rds.amazonaws.com"
     port = 3306
@@ -219,14 +267,14 @@ def interest(request):
             ctx['career'] = career
             ctx['license'] = license_lst
             ctx['usercarexists'] = True
-        
+
         else:
             ctx['usercarexists'] = False
 
     else:
         ctx['userspecexists'] = False
-    
-    if recom_models.UserLicense.objects.all():     
+
+    if recom_models.UserLicense.objects.all():
         ctx['licenseid'] = (recom_models.UserLicense.objects.all().latest('user_license_id').user_license_id) + 1
     else:
         ctx['licenseid'] = 1
@@ -268,23 +316,23 @@ def CareerUpdate(request, pk):
     return render(request, 'edit_basic.html', ctx)
 
 
-from django.views.generic.edit import UpdateView 
-  
-class BasicUpdate(UpdateView): 
+from django.views.generic.edit import UpdateView
+
+class BasicUpdate(UpdateView):
     model = recom_models.User
 
     template_name = 'edit_basic.html'
-  
-    # specify the fields 
-    
-    fields = [ 
-        "name", 
+
+    # specify the fields
+
+    fields = [
+        "name",
         "age",
         "region",
         "holiday_tp_nm",
         "min_sal"
-    ] 
-    
+    ]
+
     success_url ="/recom/interest/"
 
 class EduLevelUpdate(UpdateView):
@@ -298,12 +346,12 @@ class EduLevelUpdate(UpdateView):
 
     success_url = "/recom/interest/"
 
-class EduLevelAdd(CreateView): 
-    model = recom_models.UserSpec 
-  
+class EduLevelAdd(CreateView):
+    model = recom_models.UserSpec
+
     template_name = 'add_edu.html'
-  
-    fields = ['edu_level'] 
+
+    fields = ['edu_level']
 
     success_url = '/recom/interest/'
 
@@ -318,10 +366,10 @@ class EduLevelAdd(CreateView):
         super(EduLevelAdd, self).post(request)
         return redirect('interest')
 
-class CareerAdd(CreateView): 
-    model = recom_models.UserCareer 
+class CareerAdd(CreateView):
+    model = recom_models.UserCareer
     template_name = 'add_career.html'
-    fields = ['career'] 
+    fields = ['career']
 
     def form_valid(self, form):
         obj = form.save(commit=False)
@@ -339,7 +387,7 @@ class CareerAdd(CreateView):
 class LicenseAdd(CreateView):
     model = recom_models.UserLicense
     template_name = 'add_license.html'
-    fields = ['license'] 
+    fields = ['license']
 
     def form_valid(self, form):
         obj = form.save(commit=False)
@@ -378,10 +426,10 @@ class LicenseTypeAdd(CreateView):
 class LicenseDelete(DeleteView):
     model = recom_models.UserLicense
     template_name = 'delete_license.html'
-    
+
     success_url = '/recom/interest/'
 
-    
+
 
 def personal(request):
     ctx = {}
