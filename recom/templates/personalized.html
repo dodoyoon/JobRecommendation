@@ -39,12 +39,12 @@
                                 <p style="text-align:center;font-size: smaller;" id="user-role">Software Engineer</p>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 divider text-center"></div>
                                     <div class="col-lg-6 left" style="text-align:center;overflow-wrap: break-word;">
-                                        <h4><p style="text-align: center;"><strong id="user-globe-rank">245 </strong></p></h4>           
+                                        <h4><p style="text-align: center;"><strong id="user-globe-rank">245 </strong></p></h4>
                                         <p><small class="label label-success">Global Ranking</small></p>
                                         <!--<button class="btn btn-success btn-block"><span class="fa fa-plus-circle"></span> Follow </button>-->
                                     </div>
                                     <div class=" col-lg-6 left" style="text-align:center;overflow-wrap: break-word;">
-                                        <h4><p style="text-align: center;"><strong id="user-college-rank">245 </strong></p></h4>                   
+                                        <h4><p style="text-align: center;"><strong id="user-college-rank">245 </strong></p></h4>
                                         <p> <small class="label label-warning">College Ranking</small></p>
                                         <!-- <button class="btn btn-info btn-block"><span class="fa fa-user"></span> View Profile </button>-->
                                     </div>
@@ -53,7 +53,7 @@
                         </div>
                     </div>
                 </div>
-            </div>    
+            </div>
         </div>
 	</div>
 </div>
@@ -62,30 +62,30 @@
 	<div class="row">
         {% for job in list %}
         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-        {% if job.min_edubg == "학력무관" %}
+        {% if job.3 == "학력무관" %}
 			<div class="offer offer-radius offer-success">
-        {% elif job.min_edubg == "초졸이하" or job.min_edubg == "중졸" or job.min_edubg == "고졸" %}
+        {% elif job.3 == "초졸이하" or job.3 == "중졸" or job.3 == "고졸" %}
             <div class="offer offer-default">
-        {% elif job.min_edubg == "대졸(2~3년)" %}
+        {% elif job.3 == "대졸(2~3년)" %}
             <div class="offer offer-radius offer-primary">
-        {% elif job.min_edubg == "대졸(4년)" %}
+        {% elif job.3 == "대졸(4년)" %}
             <div class="offer offer-info">
-        {% elif job.min_edubg == "석사" %}
+        {% elif job.3 == "석사" %}
             <div class="offer offer-warning">
         {% else %}
             <div class="offer offer-radius offer-danger">
         {% endif %}
 				<div class="shape">
 					<div class="shape-text">
-						{{ job.min_edubg }}
+						{{ job.3 }}
 					</div>
 				</div>
 				<div class="offer-content">
 					<h3 class="lead">
-                        {{ job.title }}
+						<a href="{% url 'job_detail' job.4 %}">{{ job.1 }}</a>
 					</h3>
 					<p>
-						{{ job.company.company }}
+						{{ job.0 }}
 					</p>
 				</div>
 			</div>
@@ -93,5 +93,29 @@
         {% endfor %}
 	</div>
 </div>
+
+
+<!-- Paginator -->
+{% if list.has_other_pages %}
+  <ul class="pagination">
+    {% if list.has_previous %}
+      <li><a href="?page={{ list.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in list.paginator.page_range %}
+      {% if list.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if list.has_next %}
+      <li><a href="?page={{ list.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
 
 {% endblock %}
