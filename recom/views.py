@@ -516,14 +516,12 @@ def personal(request):
 
     notice_list = recommend(user.pk)
 
-    list_elem_cnt = len(list(notice_list))
-    page_cnt = int(list_elem_cnt / 24)
-
     # Pagination
     page = request.GET.get('page', 1)
-    paginator = Paginator(notice_list, page_cnt)
+    paginator = Paginator(notice_list, 20)
+
     try:
-        notices = paginator.page(page)
+        notices = paginator.page(page) # 여기서 에러!
     except PageNotAnInteger:
         notices = paginator.page(1)
     except EmptyPage:
