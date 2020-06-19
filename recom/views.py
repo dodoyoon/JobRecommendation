@@ -41,28 +41,33 @@ def search(request):
         return redirect('login')
 
 
+    region_list = recom_models.Region.objects.all()
+    category_list = recom_models.JobsCd.objects.all()
+
+    ctx['region_list'] = region_list
+    ctx['category_list'] = category_list
+
 
     if request.method == 'POST':
         category = request.POST['category']
         region = request.POST['region']
 
+        print(">>> Search!")
         print(category)
         print(region)
-        print(type(category))
-        print(type(region))
-
-        if category is "":
-            print("YESSSS")
 
 
-        if category is not "" and region is not "":
+        if category != "None" and region != "None":
             notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category, company__region__region = region)
 
-        elif category is "":
+        elif category == "None" and region != "None":
             notice_list = recom_models.Notice.objects.filter(company__region__region = region)
 
-        else:
+        elif region == "None" and category != "None":
             notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category)
+
+        else:
+            notice_list = recom_models.Notice.objects.all()
 
         ctx['notices'] = notice_list
 
@@ -89,15 +94,40 @@ def job_list(request):
         return redirect('login')
 
 
-    notice_list = recom_models.Notice.objects.raw('SELECT * FROM notice')
+    region_list = recom_models.Region.objects.all()
+    category_list = recom_models.JobsCd.objects.all()
+
+    ctx['region_list'] = region_list
+    ctx['category_list'] = category_list
+
+    if request.method == 'POST':
+        category = request.POST['category']
+        region = request.POST['region']
+
+        print(">>> Search!")
+        print(category)
+        print(region)
 
 
-    list_elem_cnt = len(list(notice_list))
-    page_cnt = int(list_elem_cnt / 24)
+        if category != "None" and region != "None":
+            notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category, company__region__region = region)
+
+        elif category == "None" and region != "None":
+            notice_list = recom_models.Notice.objects.filter(company__region__region = region)
+
+        elif region == "None" and category != "None":
+            notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category)
+
+        else:
+            notice_list = recom_models.Notice.objects.all()
+
+    else:
+        notice_list = recom_models.Notice.objects.raw('SELECT * FROM notice')
+
 
     # Pagination
     page = request.GET.get('page', 1)
-    paginator = Paginator(notice_list, page_cnt)
+    paginator = Paginator(notice_list, 20)
     try:
         notices = paginator.page(page)
     except PageNotAnInteger:
@@ -108,6 +138,8 @@ def job_list(request):
     ctx['notices'] = notices
 
     return render(request, 'job_list.html', ctx)
+
+
 
 def calc_salary(sal):
     sal_str = ""
@@ -539,7 +571,6 @@ def recommend(id):
 
     cursor.execute(q5)
     rcmd_lst = cursor.fetchall()
-    print(rcmd_lst)
 
     return rcmd_lst
 

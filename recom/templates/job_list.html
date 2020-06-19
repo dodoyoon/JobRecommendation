@@ -13,13 +13,58 @@
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <!------ Include the above in your HEAD tag ---------->
 
+<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+
 <!--Custom styles-->
 <link href="{% static 'recom/job_list.css' %}" rel="stylesheet">
+
 
 {% endblock %}
 
 
 {% block content %}
+
+<h2>채용공고 검색</h2>
+<div class="container">
+	<div class="row">
+        <div class="span12">
+            <form
+                method="POST"
+                action=""
+                enctype="multipart/form-data"
+                id="dataform"
+                class="form-inline"
+            >
+                {% csrf_token %}
+				<span>
+					<h4>카테고리</h4>
+	                <select name="category" id="category">
+	                    <option val="None">None</option>
+	                    {% for item in category_list %}
+	                    <option val="{{ item.jobs_cd }}"> {{ item.job_name }} </option>
+	                    {% endfor %}
+	                </select>
+				</span>
+
+				<span>
+					<h4>지역</h4>
+	                <select name="region" id="regions">
+	                    <option val="None">None</option>
+	                    {% for item in region_list %}
+	                    <option val="{{ item.region_id }}"> {{ item.region }} </option>
+	                    {% endfor %}
+	                </select>
+				</span>
+
+                <button id='submit' type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
 
 <div class="container">
 	<div class="row">
