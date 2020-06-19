@@ -10,6 +10,7 @@ from django.shortcuts import redirect
 from django.views.generic.edit import CreateView, DeleteView
 
 from recom import models as recom_models
+from datetime import datetime
 
 
 # main page
@@ -131,12 +132,13 @@ def job_detail(request, pk):
         ctx['userobj'] = user
     else:
         return redirect('login')
+    authuser = recom_models.AuthUser.objects.get(username=username)
+    dbuser = recom_models.User.objects.get(user=authuser)
 
     try:
         notice = get_object_or_404(recom_models.Notice, pk=pk)
     except Notice.DoesNotExist:
         return HttpResponse("채용공고가 없습니다.")
-
 
     min_sal = int(notice.min_sal)
     max_sal = int(notice.max_sal)
@@ -159,10 +161,66 @@ def job_detail(request, pk):
 
     ctx['salary_str'] = salary_str
 
+    search = recom_models.Favorite.objects.filter(user=dbuser, notice=notice)
+    if search.exists():
+        ctx['favorite'] = True
+    else:
+        ctx['favorite'] = False
+
     # print(salary_str)
 
     return render(request, 'job_detail.html', ctx)
 
+def add_favorite(request, pk):
+    ctx={}
+
+    if request.user.is_authenticated:
+        username = request.user.username
+        user = request.user
+        ctx['userobj'] = user
+    else:
+        return redirect('login')
+    authuser = recom_models.AuthUser.objects.get(username=username)
+    dbuser = recom_models.User.objects.get(user=authuser)
+    notice = recom_models.Notice.objects.get(notice_id=pk)
+
+    recom_models.Favorite.objects.create(user=dbuser, notice=notice, applieddate=datetime.now())
+
+    return redirect(job_detail, pk)
+
+def delete_favorite(request, pk):
+    ctx={}
+
+    if request.user.is_authenticated:
+        username = request.user.username
+        user = request.user
+        ctx['userobj'] = user
+    else:
+        return redirect('login')
+    authuser = recom_models.AuthUser.objects.get(username=username)
+    dbuser = recom_models.User.objects.get(user=authuser)
+    notice = recom_models.Notice.objects.get(notice_id=pk)
+
+    fav = recom_models.Favorite.objects.get(user=dbuser, notice=notice)
+    fav.delete()
+
+    return redirect(job_detail, pk)
+
+def favorite(request):
+    ctx={}
+
+    if request.user.is_authenticated:
+        username = request.user.username
+        user = request.user
+        ctx['userobj'] = user
+    else:
+        return redirect('login')
+    userid = User.objects.get(username=username).id
+
+    notices = recom_models.Notice.objects.raw('select * from favorite join notice on favorite.notice_id = notice.notice_id where user_id = %s', [userid])
+    ctx['notices'] = notices
+
+    return render(request, 'favorite.html', ctx)
 
 def signup(request):
     if request.method == 'POST':

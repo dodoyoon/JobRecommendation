@@ -59,6 +59,11 @@
 		                        		{{ notice.title }}
 		                        	</h3>
 									<h5>{{ notice.company.company }}</h5>
+									{% if favorite %}
+									<a href="{% url 'delete_fave' notice.pk %}" class="btn btn-outline-primary">찜 취소</a>
+									{% else %}
+									<a href="{% url 'add_fave' notice.pk %}" class="btn btn-outline-primary">찜 하기</a>
+									{% endif %}
 		                    	</div>
 								<div class="wizard-navigation">
 									<ul>
