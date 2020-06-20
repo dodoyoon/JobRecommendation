@@ -245,6 +245,7 @@ def add_favorite(request, pk):
 
     return redirect(job_detail, pk)
 
+from django.db import connection
 def delete_favorite(request, pk):
     ctx={}
 
@@ -254,12 +255,24 @@ def delete_favorite(request, pk):
         ctx['userobj'] = user
     else:
         return redirect('login')
+    userid = User.objects.get(username=username).id
     authuser = recom_models.AuthUser.objects.get(username=username)
     dbuser = recom_models.User.objects.get(user=authuser)
-    notice = recom_models.Notice.objects.get(notice_id=pk)
+    notice = recom_models.Notice.objects.get(notice_id=pk).notice_id
 
-    fav = recom_models.Favorite.objects.get(user=dbuser, notice=notice)
-    fav.delete()
+    host = "project.catth3zniejo.ap-northeast-2.rds.amazonaws.com"
+    port = 3306
+    username1 = "admin"
+    password = "tkdghkd1!"
+    database = "JobRecommendSystem"
+
+    conn = pymysql.connect(host, user=username1, passwd=password, db=database, \
+    port=port, use_unicode=True, charset='utf8')
+    cursor = conn.cursor()
+
+    cursor.execute('DELETE FROM favorite WHERE user_id = %s AND notice_id = %s', [userid, notice])
+
+    conn.commit()
 
     return redirect(job_detail, pk)
 
