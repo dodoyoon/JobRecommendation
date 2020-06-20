@@ -1,17 +1,17 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<h1>Interest Page</h1>
+<h1>나의 관심사</h1>
 
 <div class="jumbotron">
+    <h5><u>사용자 기본 정보</u></h5>
     <a style="float:right;" href="{% url 'edit_basic' user.pk %}" class="btn btn-outline-primary">Edit</a>
-    <p>username : {{ userobj.username }}</p>
-    <p>name : {{ basic.name }}</p>
-    <p>age : {{ basic.age }}</p>
-    <p>region id : {{ basic.region_id }}</p>
-    <p>location : {{ basic.location }}</p>
-    <p>holiday_tp_nm : {{ basic.holiday_tp_nm }}</p>
-    <p>min_sal : {{ basic.min_sal }}</p>
+    <p>ID : {{ userobj.username }}</p>
+    <p>이름 : {{ basic.name }}</p>
+    <p>나이 : {{ basic.age }}</p>
+    <p>지역 : {{ basic.region }}</p>
+    <p>희망 근무형태 : {{ basic.holiday_tp_nm }}</p>
+    <p>희망 최소연봉 : {{ basic.min_sal }}</p>
 </div>
 
 
@@ -21,7 +21,7 @@
     {% else %}
     <a style="float:right;" href="{% url 'add_edu' user.pk %}" class="btn btn-outline-primary">Add</a>
     {% endif %}
-    <p><u>edu level</u></p> 
+    <p><u>최종 학력</u></p> 
     {{ edu }}
 </div>
 
@@ -32,12 +32,12 @@
     {% else %}
     <a style="float:right;" href="{% url 'add_career' user.pk %}" class="btn btn-outline-primary">Add</a>
     {% endif %}
-    <p><u>career</u></p>
+    <p><u>경력</u></p>
     {{ career }}
 </div>
 
 <div class="jumbotron">
-    <p><u>License</u><a style="float:right;" href="{% url 'add_license' %}" class="btn btn-outline-primary">Add</a></p> 
+    <p><u>자격증</u><a style="float:right;" href="{% url 'add_license' %}" class="btn btn-outline-primary">Add</a></p> 
     
     {% for ex in license %}
         <p>{{ ex.1 }}    <a style="float:right;" href="{% url 'delete_license' ex.0 %}" class="btn btn-outline-primary">Delete</a></p>
