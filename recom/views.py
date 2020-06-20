@@ -182,8 +182,9 @@ def job_detail(request, pk):
 
     min_sal_str = calc_salary(min_sal)
 
-
     ctx['notice'] = notice
+
+    # 연봉정보 합치기
     salary_str = "연봉타입 : "
     salary_str += str(notice.sal_tp_nm)
     salary_str += '\n'
@@ -192,6 +193,14 @@ def job_detail(request, pk):
     salary_str += "최소연봉 : " + min_sal_str
 
     ctx['salary_str'] = salary_str
+
+    # 회사주소 합치기
+    # <h5 class="info-text">{{notice.company.basic_addr}}</h5>
+    # <h5 class="info-text">{{notice.company.detail_addr}}</h5>
+
+    company_addr = notice.company.basic_addr + " " + notice.company.detail_addr
+    ctx['company_addr'] = company_addr
+
 
     search = recom_models.Favorite.objects.filter(user=dbuser, notice=notice)
     if search.exists():
