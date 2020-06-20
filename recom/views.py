@@ -59,7 +59,7 @@ def search(request):
 
     # objects to be added to the filtering
     region_list = recom_models.Region.objects.all()
-    category_list = recom_models.JobsCd.objects.all()
+    category_list = recom_models.JobsCd.objects.raw('SELECT DISTINCT(jobs_cd) FROM notice')
 
     ctx['region_list'] = region_list
     ctx['category_list'] = category_list
@@ -68,25 +68,38 @@ def search(request):
     if request.method == 'POST':
         category = request.POST['category']
         region = request.POST['region']
+        salary = request.POST['salary']
 
-        print(category)
-        print(region)
+        if salary != "":
+            salary_int = int(salary) * 10000
 
 
-        if category != "None" and region != "None":
+
+        if category != "None" and region != "None" and salary != "":
+            notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category, company__region__region = region, min_sal__gte=salary_int)
+
+        elif category == "None" and region != "None" and salary != "":
+            notice_list = recom_models.Notice.objects.filter(company__region__region = region, min_sal__gte=salary_int)
+
+        elif region == "None" and category != "None" and salary != "":
+            notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category, min_sal__gte=salary_int)
+
+        elif salary == "" and region != "None" and category != "None":
             notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category, company__region__region = region)
 
-        elif category == "None" and region != "None":
+        elif category != "None":
             notice_list = recom_models.Notice.objects.filter(company__region__region = region)
 
-        elif region == "None" and category != "None":
-            notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category)
+        elif region != "None":
+            notice_list = recom_models.Notice.objects.filter(company__region__region = region)
 
-        else:
+        elif salary != "":
+            notice_list = recom_models.Notice.objects.filter(min_sal__gte=salary_int)
+
+        elif category == "None" and region == "None" and salary == "":
             notice_list = recom_models.Notice.objects.all()
 
         ctx['notices'] = notice_list
-
 
         return render(request, 'search.html', ctx)
     else:
@@ -119,22 +132,36 @@ def job_list(request):
     if request.method == 'POST':
         category = request.POST['category']
         region = request.POST['region']
-
-        print(">>> Search!")
-        print(category)
-        print(region)
+        salary = request.POST['salary']
 
 
-        if category != "None" and region != "None":
+        if salary != "":
+            salary_int = int(salary) * 10000
+
+
+
+        if category != "None" and region != "None" and salary != "":
+            notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category, company__region__region = region, min_sal__gte=salary_int)
+
+        elif category == "None" and region != "None" and salary != "":
+            notice_list = recom_models.Notice.objects.filter(company__region__region = region, min_sal__gte=salary_int)
+
+        elif region == "None" and category != "None" and salary != "":
+            notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category, min_sal__gte=salary_int)
+
+        elif salary == "" and region != "None" and category != "None":
             notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category, company__region__region = region)
 
-        elif category == "None" and region != "None":
+        elif category != "None":
             notice_list = recom_models.Notice.objects.filter(company__region__region = region)
 
-        elif region == "None" and category != "None":
-            notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category)
+        elif region != "None":
+            notice_list = recom_models.Notice.objects.filter(company__region__region = region)
 
-        else:
+        elif salary != "":
+            notice_list = recom_models.Notice.objects.filter(min_sal__gte=salary_int)
+
+        elif category == "None" and region == "None" and salary == "":
             notice_list = recom_models.Notice.objects.all()
 
     else:
