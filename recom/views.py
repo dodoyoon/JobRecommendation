@@ -16,7 +16,6 @@ from random import sample
 
 # main page
 def index(request):
-    """index page"""
     ctx = {
     }
 
@@ -31,9 +30,17 @@ def index(request):
     notice_cnt = notice_list.count()
     rand_ids = sample(range(1, notice_cnt), 4)
     rand_notice_list = recom_models.Notice.objects.filter(notice_id__in=rand_ids)
-    print(rand_notice_list[0].title)
 
     ctx['notices'] = rand_notice_list
+
+
+    # image list
+    img_list = ["https://image.flaticon.com/icons/svg/65/65053.svg"]
+    img_list.append("https://media.istockphoto.com/vectors/hiring-and-employees-icons-job-related-images-showing-hiring-vector-id1226249188")
+    img_list.append("https://image.flaticon.com/icons/svg/942/942800.svg")
+    img_list.append("https://image.flaticon.com/icons/svg/942/942799.svg")
+
+    ctx['img_list'] = img_list
 
     return render(request, 'index.html', ctx)
 
@@ -50,6 +57,7 @@ def search(request):
         return redirect('login')
 
 
+    # objects to be added to the filtering
     region_list = recom_models.Region.objects.all()
     category_list = recom_models.JobsCd.objects.all()
 
@@ -61,7 +69,6 @@ def search(request):
         category = request.POST['category']
         region = request.POST['region']
 
-        print(">>> Search!")
         print(category)
         print(region)
 
@@ -196,10 +203,10 @@ def job_detail(request, pk):
     # 연봉정보 합치기
     salary_str = "연봉타입 : "
     salary_str += str(notice.sal_tp_nm)
-    salary_str += '\n'
-    salary_str += "최대연봉 : " + max_sal_str
-    salary_str += '\n'
-    salary_str += "최소연봉 : " + min_sal_str
+    salary_str += ',\n'
+    salary_str += "최대 : " + max_sal_str
+    salary_str += ',\n'
+    salary_str += "최소 : " + min_sal_str
 
     ctx['salary_str'] = salary_str
 
