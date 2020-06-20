@@ -45,72 +45,6 @@ def index(request):
     return render(request, 'index.html', ctx)
 
 
-def search(request):
-    ctx = {
-    }
-
-    if request.user.is_authenticated:
-        username = request.user.username
-        user = request.user
-        ctx['userobj'] = user
-    else:
-        return redirect('login')
-
-
-    # objects to be added to the filtering
-    region_list = recom_models.Region.objects.all()
-    category_list = recom_models.JobsCd.objects.raw('SELECT DISTINCT(jobs_cd) FROM notice')
-
-    ctx['region_list'] = region_list
-    ctx['category_list'] = category_list
-
-
-    if request.method == 'POST':
-        category = request.POST['category']
-        region = request.POST['region']
-        salary = request.POST['salary']
-
-        if salary != "":
-            salary_int = int(salary) * 10000
-
-
-
-        if category != "None" and region != "None" and salary != "":
-            notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category, company__region__region = region, min_sal__gte=salary_int)
-
-        elif category == "None" and region != "None" and salary != "":
-            notice_list = recom_models.Notice.objects.filter(company__region__region = region, min_sal__gte=salary_int)
-
-        elif region == "None" and category != "None" and salary != "":
-            notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category, min_sal__gte=salary_int)
-
-        elif salary == "" and region != "None" and category != "None":
-            notice_list = recom_models.Notice.objects.filter(jobs_cd__job_name = category, company__region__region = region)
-
-        elif category != "None":
-            notice_list = recom_models.Notice.objects.filter(company__region__region = region)
-
-        elif region != "None":
-            notice_list = recom_models.Notice.objects.filter(company__region__region = region)
-
-        elif salary != "":
-            notice_list = recom_models.Notice.objects.filter(min_sal__gte=salary_int)
-
-        elif category == "None" and region == "None" and salary == "":
-            notice_list = recom_models.Notice.objects.all()
-
-        ctx['notices'] = notice_list
-
-        return render(request, 'search.html', ctx)
-    else:
-        return render(request, 'search.html', ctx)
-
-
-
-
-    return render(request, 'search.html', ctx)
-
-
 # 채용정보 보여주기
 def job_list(request):
     ctx={}
@@ -137,7 +71,6 @@ def job_list(request):
 
         if salary != "":
             salary_int = int(salary) * 10000
-
 
 
         if category != "None" and region != "None" and salary != "":
