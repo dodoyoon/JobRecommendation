@@ -111,7 +111,7 @@ def job_list(request):
 
 
     region_list = recom_models.Region.objects.all()
-    category_list = recom_models.JobsCd.objects.all()
+    category_list = recom_models.JobsCd.objects.raw('SELECT DISTINCT(jobs_cd) FROM notice')
 
     ctx['region_list'] = region_list
     ctx['category_list'] = category_list
