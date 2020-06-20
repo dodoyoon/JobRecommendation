@@ -11,6 +11,7 @@ from django.views.generic.edit import CreateView, DeleteView
 
 from recom import models as recom_models
 from datetime import datetime
+from random import sample
 
 
 # main page
@@ -23,10 +24,18 @@ def index(request):
         username = request.user.username
         user = request.user
         ctx['userobj'] = user
-
-        return render(request, 'index.html', ctx)
     else:
         return redirect('login')
+
+    notice_list = recom_models.Notice.objects.all()
+    notice_cnt = notice_list.count()
+    rand_ids = sample(range(1, notice_cnt), 4)
+    rand_notice_list = recom_models.Notice.objects.filter(notice_id__in=rand_ids)
+    print(rand_notice_list[0].title)
+
+    ctx['notices'] = rand_notice_list
+
+    return render(request, 'index.html', ctx)
 
 
 def search(request):
