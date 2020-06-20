@@ -9,7 +9,7 @@
     <p>ID : {{ userobj.username }}</p>
     <p>이름 : {{ basic.name }}</p>
     <p>나이 : {{ basic.age }}</p>
-    <p>지역 : {{ basic.region }}</p>
+    <p>희망 근무지역 : {{ basic.region }}</p>
     <p>희망 근무형태 : {{ basic.holiday_tp_nm }}</p>
     <p>희망 최소연봉 : {{ basic.min_sal }}</p>
 </div>
@@ -21,7 +21,7 @@
     {% else %}
     <a style="float:right;" href="{% url 'add_edu' user.pk %}" class="btn btn-outline-primary">Add</a>
     {% endif %}
-    <p><u>최종 학력</u></p> 
+    <p><u>최종 학력</u></p>
     {{ edu }}
 </div>
 
@@ -37,8 +37,8 @@
 </div>
 
 <div class="jumbotron">
-    <p><u>자격증</u><a style="float:right;" href="{% url 'add_license' %}" class="btn btn-outline-primary">Add</a></p> 
-    
+    <p><u>자격증</u><a style="float:right;" href="{% url 'add_license' %}" class="btn btn-outline-primary">Add</a></p>
+
     {% for ex in license %}
         <p>{{ ex.1 }}    <a style="float:right;" href="{% url 'delete_license' ex.0 %}" class="btn btn-outline-primary">Delete</a></p>
     {% endfor %}

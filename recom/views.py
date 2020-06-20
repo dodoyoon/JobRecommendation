@@ -538,18 +538,18 @@ def recommend(id):
     # @career = user의 '경력정보'
     q2 = "SET @career = (SELECT career FROM career WHERE career_id = (SELECT career_id FROM user_career WHERE user_spec_id = (SELECT user_spec_id FROM user_spec WHERE user_id = {})));".format(id)
     # @favorite = user의 '찜한정보'
-    q3 = "SET @favorite = (SELECT notice_id FROM favorite WHERE user_id ={});".format(id)
+    # q3 = "SET @favorite = (SELECT notice_id FROM favorite WHERE user_id ={});".format(id)
 
     q1_check = "SELECT @region_id;"
     q2_check = "SELECT @career;"
-    q3_check = "SELECT @favorite;"
-    q4_check = "SELECT edu_level FROM user_spec WHERE user_id = {};".format(id)
+    # q3_check = "SELECT @favorite;"
+    # q4_check = "SELECT edu_level FROM user_spec WHERE user_id = {};".format(id)
 
     cursor.execute(q1)
     cursor.execute(q2)
-    cursor.execute(q3)
+    # cursor.execute(q3)
 
-    q1, q2, q3, q4 = ('','','','')
+    q1, q2 = ('','')
     cursor.execute(q1_check)
     if cursor.fetchone()[0] != None:
         q1 = 'WHERE region_id = @region_id'
@@ -558,15 +558,15 @@ def recommend(id):
     if cursor.fetchone()[0] != None:
         q2 = 'WHERE career = @career'
 
-    cursor.execute(q3_check)
-    if cursor.fetchone()[0] != None:
-        q3 = 'WHERE notice_id = @favorite'
+    # cursor.execute(q3_check)
+    # if cursor.fetchone()[0] != None:
+    #     q3 = 'WHERE notice_id = @favorite'
 
-    cursor.execute(q4_check)
-    if cursor.fetchone() != None:
-        q4 = 'JOIN (SELECT edu_level FROM edu_level WHERE edu_level_id <= (SELECT edu_level_id FROM edu_level WHERE edu_level = (SELECT edu_level FROM user_spec WHERE user_id = {}))) AS e ON fv.min_edubg = e.edu_level'.format(id)
+    # cursor.execute(q4_check)
+    # if cursor.fetchone() != None:
+    #     q4 = 'JOIN (SELECT edu_level FROM edu_level WHERE edu_level_id <= (SELECT edu_level_id FROM edu_level WHERE edu_level = (SELECT edu_level FROM user_spec WHERE user_id = {}))) AS e ON fv.min_edubg = e.edu_level'.format(id)
 
-    q5 = "SELECT company, title, career, min_edubg, notice_id FROM (SELECT fv.company_id, fv.title, fv.career, fv.min_edubg, fv.notice_id FROM (SELECT company_id, title, career, min_edubg, notice_id FROM notice AS n JOIN (SELECT company_id AS c_id FROM company {}) AS c ON c_id = n.company_id {} UNION SELECT company_id, title, career, min_edubg, notice_id FROM notice {}) AS fv {}) AS lst JOIN company AS c ON c.company_id = lst.company_id;".format(q1, q2, q3, q4)
+    q5 = "SELECT company, title, career, min_edubg, notice_id FROM (SELECT lt.company_id, lt.title, lt.career, lt.min_edubg, lt.notice_id FROM (SELECT company_id, title, career, min_edubg, notice_id FROM notice AS n JOIN (SELECT company_id AS c_id FROM company {}) AS c ON c_id = n.company_id {}) AS lt JOIN (SELECT edu_level FROM edu_level WHERE edu_level_id <= (SELECT edu_level_id FROM edu_level WHERE edu_level = (SELECT edu_level FROM user_spec WHERE user_id = {}))) AS e ON lt.min_edubg = e.edu_level) AS lst JOIN company AS c ON c.company_id = lst.company_id;".format(q1, q2, id)
 
 
     cursor.execute(q5)
