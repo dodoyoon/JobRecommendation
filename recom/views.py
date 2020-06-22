@@ -368,7 +368,6 @@ def interest(request):
         ctx['licenseid'] = 1
     ctx['basic'] = recom_models.User.objects.get(user_id=userid)
     basic = recom_models.User.objects.raw('select * from user join region on user.region_id = region.region_id where user_id = %s', [userid])
-    print(basic)
 
     return render(request, 'interest.html', ctx)
 
@@ -403,7 +402,7 @@ def CareerUpdate(request, pk):
 
     ctx['form'] = form
 
-    return render(request, 'edit_basic.html', ctx)
+    return render(request, 'edit_career.html', ctx)
 
 
 from django.views.generic.edit import UpdateView
