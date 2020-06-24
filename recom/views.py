@@ -26,6 +26,13 @@ def index(request):
     else:
         return redirect('login')
 
+
+    authuser = recom_models.AuthUser.objects.get(username=username)
+    userid = authuser.id
+
+    if not recom_models.User.objects.filter(user_id=userid).exists():
+        recom_models.User.objects.create(user_id=userid)
+
     notice_list = recom_models.Notice.objects.all()
     notice_cnt = notice_list.count()
     rand_ids = sample(range(1, notice_cnt), 4)
@@ -140,8 +147,15 @@ def job_detail(request, pk):
         ctx['userobj'] = user
     else:
         return redirect('login')
+
     authuser = recom_models.AuthUser.objects.get(username=username)
+    userid = authuser.id
+
+    if not recom_models.User.objects.filter(user_id=userid).exists():
+        recom_models.User.objects.create(user_id=userid)
+
     dbuser = recom_models.User.objects.get(user=authuser)
+
 
     try:
         notice = get_object_or_404(recom_models.Notice, pk=pk)
