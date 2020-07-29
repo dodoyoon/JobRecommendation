@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'JobRecommendSystem',
         'USER': 'admin',
-        'PASSWORD': 'tkdghkd1!',
+        'PASSWORD': '#', #type password
         'HOST': 'project.catth3zniejo.ap-northeast-2.rds.amazonaws.com',
         'PORT': '3306',
     }
