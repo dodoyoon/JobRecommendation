@@ -1,4 +1,4 @@
-# JobRecom
+# JobRecommendation Website
 Job Recommendation System for 2020-01 Database Systems Course
 
 [src](https://github.com/dodoyoon/JobRecom) | 
